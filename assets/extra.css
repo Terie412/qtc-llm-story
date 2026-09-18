@@ -116,6 +116,13 @@ body[data-md-color-scheme="slate"] {
 
 /* ---------- 3. 版心：每行约 38 字，整块居中 ---------- */
 
+/* 整站网格收窄。Material 默认 61rem 铺得很开，右栏收掉之后
+   正文右边会空出一大块；把网格收到"侧栏 + 版心"刚好的宽度并居中，
+   左右留白才是对称的。 */
+.md-grid {
+  max-width: 48rem;
+}
+
 .md-content__inner {
   max-width: 34rem;
   margin-inline: auto;
@@ -123,11 +130,19 @@ body[data-md-color-scheme="slate"] {
 }
 
 /* 每一章都是平铺的正文、没有小标题，右侧"本页目录"是空的。
-   收掉它，正文才能真正落在版心正中。 */
-@media screen and (min-width: 76.25em) {
-  .md-sidebar--secondary {
+   收掉它，正文才能真正落在版心正中。
+   坑：Material 用 .md-sidebar--secondary:not([hidden]) 显示右栏，特异性两级，
+   所以这里必须写成 .md-sidebar.md-sidebar--secondary 才压得过它。 */
+@media screen and (min-width: 1220px) {
+  .md-sidebar.md-sidebar--secondary {
     display: none;
   }
+
+  /* 右栏收掉之后，Material 给正文留的那点右边距也跟着撤掉，否则版心是偏的 */
+  [dir="ltr"] .md-sidebar--secondary ~ .md-content > .md-content__inner {
+    margin-right: 0;
+  }
+}
 
 /* ---------- 4. 页头：不要大色块，只留一条发丝线 ---------- */
 
@@ -167,7 +182,7 @@ body[data-md-color-scheme="slate"] {
 
 /* 固定栏会占住视口底部，给左侧目录减掉这段高度，
    否则目录滚到底时最后几项会被盖住点不到 */
-@media screen and (min-width: 76.25em) {
+@media screen and (min-width: 1220px) {
   .md-sidebar__scrollwrap {
     max-height: calc(100vh - 7rem);
   }
@@ -180,7 +195,7 @@ body[data-md-color-scheme="slate"] {
 }
 
 /* 站名已经在页头了，侧栏顶部不必再重复一遍 */
-@media screen and (min-width: 76.25em) {
+@media screen and (min-width: 1220px) {
   .md-nav--primary > .md-nav__title {
     display: none;
   }
@@ -244,7 +259,7 @@ body[data-md-color-scheme="slate"] {
   text-underline-offset: 0.2em;
 }
 
-@media screen and (max-width: 44em) {
+@media screen and (max-width: 704px) {
   .book-toc ol {
     columns: 1;
   }
