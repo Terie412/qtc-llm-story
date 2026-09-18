@@ -8,6 +8,10 @@
 
 它做三件事：拆章 → 构建站点 → 推到 gh-pages 分支。
 不会自动触发，只有你手动运行才会更新线上。
+
+发布仓库的提交信息一律用 "update"（main 和 gh-pages 都是），
+gh-deploy 默认会写 "Deployed <sha> with MkDocs version: ..."，
+所以下面用 -m 覆盖掉。
 """
 
 import os
@@ -45,7 +49,7 @@ if dry:
     print("\n[dry-run] 站点已构建到 site/，未推送。")
     raise SystemExit(0)
 
-if run([mkdocs_python, "-m", "mkdocs", "gh-deploy", "--force"]) != 0:
+if run([mkdocs_python, "-m", "mkdocs", "gh-deploy", "--force", "-m", "update"]) != 0:
     raise SystemExit("推送失败")
 
 print("\n已发布： %s" % URL)
