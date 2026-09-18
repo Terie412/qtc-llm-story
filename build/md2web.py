@@ -80,12 +80,47 @@ def with_dropcap(text):
     return "%s\n{: .%s }%s" % (head, first_para_dropcap(text), rest)
 
 
+def pager_html(i, entries):
+    """正文下方的"上一章 / 下一章"。
+
+    i 是当前章在 entries 里的下标（0 起）。第一页的上一章、最后一页的
+    下一章都指回首页，两头不至于落空。
+    href 要把 .md 换成 .html，因为 mkdocs.yml 里 use_directory_urls: false。
+    """
+    n = len(entries)
+
+    def item(j, direction, right):
+        if j < 0 or j >= n:
+            href, name, direction = "index.html", "全书目录", "目录"
+        else:
+            href, name = entries[j]
+            href = href[:-3] + ".html"
+            name = name.replace("\u3000", " ")
+        # 注意 base 和 modifier 都要写：只写 --next 的话按钮拿不到基础样式
+        cls = "book-pager__item book-pager__item--next" if right else "book-pager__item"
+        return (
+            '\n  <a class="%s" href="%s">'
+            '<span class="book-pager__dir">%s</span>'
+            '<span class="book-pager__name">%s</span></a>'
+            % (cls, href, direction, name)
+        )
+
+    return (
+        '\n\n<div class="book-pager">'
+        + item(i - 1, "上一章", False)
+        + item(i + 1, "下一章", True)
+        + "\n</div>\n"
+    )
+
+
 # 逐章写文件。h1 用内联 HTML 拆成"章号 + 章名"两级，交给 CSS 分别上色；
 # 同时写 front matter 的 title —— h1 里带了标签之后，MkDocs 自己提的标题
 # 会把标签一起带进 <title>，这里显式给一个干净的。
-written = []
+# 章末再挂一组上一章 / 下一章的按钮。
+written = [("%02d.md" % i, name) for i, (name, _) in enumerate(sections, start=1)]
+
 for idx, (name, text) in enumerate(sections, start=1):
-    fn = "%02d.md" % idx
+    fn = written[idx - 1][0]
     no, chap = split_chapter_title(name)
     if no:
         h1 = '# <span class="chap-no">%s</span><span class="chap-name">%s</span>' % (
@@ -95,10 +130,14 @@ for idx, (name, text) in enumerate(sections, start=1):
     else:
         h1 = '# <span class="chap-name">%s</span>' % chap
     io.open(os.path.join(DOCS, fn), "w", encoding="utf-8").write(
-        "---\ntitle: %s\n---\n\n%s\n\n%s\n"
-        % (name.replace("\u3000", " "), h1, with_dropcap(text))
+        "---\ntitle: %s\n---\n\n%s\n\n%s\n%s"
+        % (
+            name.replace("\u3000", " "),
+            h1,
+            with_dropcap(text),
+            pager_html(idx - 1, written),
+        )
     )
-    written.append((fn, name))
 
 
 # ---------------------------------------------------------------------------
@@ -532,6 +571,78 @@ body[data-md-color-scheme][data-md-color-primary] {
 @media screen and (max-width: 704px) {
   .book-toc ol {
     columns: 1;
+  }
+}
+
+/* ---------- 8. 章节翻页：正文读完，下一步就在手边 ---------- */
+
+/* 一条发丝线把正文和按钮分开，跟章题下那道引线是同一个记号 */
+.book-pager {
+  display: flex;
+  gap: 0.6rem;
+  margin: 3rem 0 0;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--book-line);
+}
+
+.book-pager__item {
+  flex: 1 1 0;
+  min-width: 0;
+  display: block;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--book-line);
+  border-radius: 0.2rem;
+  text-decoration: none;
+  transition: border-color 125ms, color 125ms;
+}
+
+.book-pager__item:hover,
+.book-pager__item:focus {
+  border-color: var(--book-accent);
+  background-color: transparent;
+}
+
+/* 方向词小字疏排，跟章号是同一种处理 */
+.book-pager__dir {
+  display: block;
+  font-family: var(--book-sans);
+  font-size: 0.58rem;
+  letter-spacing: 0.2em;
+  color: var(--book-nav-ink);
+  margin-bottom: 0.3rem;
+}
+
+.book-pager__name {
+  display: block;
+  font-family: var(--book-sans);
+  font-size: 0.72rem;
+  color: var(--book-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.book-pager__item:hover .book-pager__dir {
+  color: var(--book-accent);
+}
+
+.book-pager__item:hover .book-pager__name {
+  color: var(--book-accent);
+}
+
+/* 下一章靠右，方向词和章名都对齐右缘 */
+.book-pager__item--next {
+  text-align: right;
+}
+
+/* 窄屏改成上下两块，长章名不至于被挤成一行省略号 */
+@media screen and (max-width: 34em) {
+  .book-pager {
+    flex-direction: column;
+  }
+
+  .book-pager__item--next {
+    text-align: left;
   }
 }
 """
