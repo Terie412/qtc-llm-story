@@ -25,15 +25,16 @@ body {
 }
 
 body[data-md-color-scheme="default"] {
-  --book-paper: #faf8f4;
+  --book-paper: #faf8f4;      /* 纸：回到中性，不带色相 */
   --book-paper-soft: #f2eee7;
-  --book-ink: #33302b;        /* 正文：最深的一档，不是纯黑 */
-  --book-ink-title: #4f4943;  /* 标题：比正文淡一档 */
+  --book-ink: #33302b;        /* 正文：中性墨，不是纯黑 */
+  --book-title-ink: #262320;  /* 首页站名：比正文深一档 */
+  --book-ink-title: #4f4943;  /* 次级标题 */
   --book-ink-soft: #6c655e;   /* 页头页脚 */
-  --book-nav-ink: #857e74;    /* 左侧目录：最淡，退到背景里 */
+  --book-nav-ink: #857e74;    /* 左侧目录：最淡 */
   --book-ink-faint: #a9a29a;
   --book-line: #e5e0d7;
-  --book-accent: #2f4f6f;
+  --book-accent: #a8442c;     /* 朱砂：全站唯一的彩色，只给章题和链接 */
 
   --md-default-bg-color: var(--book-paper);
   --md-default-fg-color: var(--book-ink);
@@ -56,15 +57,16 @@ body[data-md-color-scheme="default"] {
 }
 
 body[data-md-color-scheme="slate"] {
-  --book-paper: #17191c;
+  --book-paper: #17191c;      /* 纸：回到中性 */
   --book-paper-soft: #1f2227;
-  --book-ink: #d2cec7;        /* 正文：最亮的一档，不是纯白 */
-  --book-ink-title: #b3ada4;  /* 标题：比正文淡一档 */
-  --book-ink-soft: #918b83;   /* 页头页脚 */
-  --book-nav-ink: #7e7871;    /* 左侧目录：最淡，退到背景里 */
+  --book-ink: #d2cec7;        /* 正文：中性墨，不是纯白 */
+  --book-title-ink: #e4e1da;  /* 首页站名：比正文亮一档 */
+  --book-ink-title: #b3ada4;
+  --book-ink-soft: #918b83;
+  --book-nav-ink: #7e7871;
   --book-ink-faint: #6f6a64;
-  --book-line: #272b31;
-  --book-accent: #8fb0d0;
+  --book-line: #2b2f35;
+  --book-accent: #d4866b;     /* 朱砂在暗底上的对应值 */
 
   --md-default-bg-color: var(--book-paper);
   --md-default-fg-color: var(--book-ink);
@@ -121,10 +123,71 @@ body[data-md-color-scheme][data-md-color-primary] {
 
 .md-typeset h1 {
   font-size: 1.7rem;
-  margin: 0 0 1.8rem;
+  margin: 0 0 2rem;
   padding: 0;
   border: none;
-  color: var(--book-ink-title);
+  color: var(--book-title-ink);
+}
+
+/* 章题分两级：章号小字疏排、后面拖一条通栏引线；章名大字、上朱砂。
+   标题是全页唯一带色的字，翻页时一眼认得出"新的一章从这里起"。
+   章号由 build/md2web.py 的 split_chapter_title() 拆出来。 */
+.md-typeset h1 .chap-no {
+  display: flex;
+  align-items: center;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  color: var(--book-accent);
+  margin-bottom: 0.55rem;
+}
+
+/* 序号引线：从章号一直拖到版心右缘，把标题压成一块"章节起首" */
+.md-typeset h1 .chap-no::after {
+  content: "";
+  flex: 1 1 auto;
+  height: 1px;
+  margin-left: 0.8rem;
+  background-color: var(--book-line);
+}
+
+.md-typeset h1 .chap-name {
+  color: var(--book-accent);
+}
+
+/* 首页那个是站名不是章题，保持墨色，下面补一道朱砂短横当题花 */
+.md-typeset h1 .book-title::after {
+  content: "";
+  display: block;
+  width: 2rem;
+  height: 2px;
+  margin-top: 1.15rem;
+  background-color: var(--book-accent);
+}
+
+/* 首字下沉。分两档，class 由 build/md2web.py 的 with_dropcap() 按
+   首段够不够两行挂上，改版心宽度或字号得回头看那个阈值。
+
+   两行档：字号是算出来的，不是试出来的。正文 0.88rem / 行高 1.95，
+   两行 = 2 × 1.95em；下沉字用 line-height:1，字号就得等于 3.9em，
+   浮空盒正好压住两行，第三行才回左边。 */
+.md-typeset h1 + p.dropcap-2::first-letter {
+  float: left;
+  font-family: var(--book-serif);
+  font-size: 3.9em;
+  line-height: 1;
+  margin: -0.08em 0.1em 0 0;
+  color: var(--book-accent);
+}
+
+/* 一行档：开篇是短句时用。字号压在行高以内，不越界顶到下一段 */
+.md-typeset h1 + p.dropcap-1::first-letter {
+  float: left;
+  font-family: var(--book-serif);
+  font-size: 1.85em;
+  line-height: 1;
+  margin: 0.12em 0.06em 0 0;
+  color: var(--book-accent);
 }
 
 .md-typeset h2 {
@@ -132,6 +195,18 @@ body[data-md-color-scheme][data-md-color-primary] {
   border: none;
   padding: 0;
   color: var(--book-ink-title);
+}
+
+/* 二级标题前面一小道朱砂横，跟章题的引线同一个记号 */
+.md-typeset h2::before {
+  content: "";
+  display: inline-block;
+  width: 1.1rem;
+  height: 2px;
+  margin-right: 0.55rem;
+  margin-bottom: 0.14rem;
+  background-color: var(--book-accent);
+  vertical-align: middle;
 }
 
 .md-typeset strong {
@@ -333,6 +408,12 @@ body[data-md-color-scheme][data-md-color-primary] {
 
 .book-toc a {
   text-decoration: none;
+}
+
+/* 目录条目里的章号也上朱砂，跟章题是同一种记号 */
+.book-toc .toc-no {
+  color: var(--book-accent);
+  margin-right: 0.5em;
 }
 
 .book-toc a:hover {

@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              第九章　正名
+              第九章 正名
             
           </span>
         </div>
@@ -1217,8 +1217,8 @@
   
 
 
-<h1 id="_1">第九章　正名<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>2006年，辛顿五十九岁。这一年他发了几篇论文，<strong>提出了一个方法叫深度信念网络</strong>，核心技术叫逐层预训练。</p>
+<h1 id="_1"><span class="chap-no">第九章</span><span class="chap-name">正名</span><a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<p class="dropcap-2">2006年，辛顿五十九岁。这一年他发了几篇论文，<strong>提出了一个方法叫深度信念网络</strong>，核心技术叫逐层预训练。</p>
 <p>先说这个方法讲了什么。</p>
 <p>前面说过，反向传播往回退的时候，力会一层层衰减，退到浅层就没了。辛顿这一次不去跟它硬碰，而是绕开：不一次把整个网络教完，而是一层一层地养。</p>
 <p>具体做法是：先单独训练最底下那一层，只让这一层看数据，不管别的，养到它自己对数据有一套说法——哪种输入常常一起出现，哪种输入互相排斥——这一层就算有样子了。然后把它冻住，在它上面再架一层，拿它吐出来的东西当输入接着养；养好了再冻住，再上一层。一层一层往上搭，搭完之后再解开所有冻结，从头到尾整体调一遍。</p>
@@ -1243,6 +1243,9 @@
 
 
 
+
+  
+  
 
 
 
