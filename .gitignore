@@ -1,0 +1,15 @@
+# 构建产物（由 build/md2pdf.py 生成，不入库）
+build/*.html
+build/_*.png
+
+# 在线版站点（由 build/md2web.py + mkdocs 生成，不入库）
+docs/
+site/
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp

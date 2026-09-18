@@ -1,0 +1,85 @@
+site_name: 神经网络史话
+site_description: 从感知机到 ChatGPT
+site_url: https://terie412.github.io/qtc-llm-story/
+repo_url: https://github.com/Terie412/qtc-llm-story
+repo_name: Terie412/qtc-llm-story
+copyright: 从感知机到 ChatGPT
+
+docs_dir: docs
+site_dir: site
+use_directory_urls: false
+
+theme:
+  name: material
+  language: zh
+  font: false
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.top
+    - navigation.sections
+    - navigation.footer
+    - toc.follow
+    - search.suggest
+    - search.highlight
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: 切换到深色模式
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: 切换到浅色模式
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - footnotes
+  - toc:
+      permalink: true
+      toc_depth: 2
+
+nav:
+  - 首页: index.md
+  - 楔子　一条线: 01.md
+  - 第一章　初啼: 02.md
+  - 第二章　界碑: 03.md
+  - 第三章　判词: 04.md
+  - 第四章　寒冬: 05.md
+  - 第五章　钥匙: 06.md
+  - 第六章　分岔: 07.md
+  - 第七章　猫眼: 08.md
+  - 第八章　孤岛: 09.md
+  - 第九章　正名: 10.md
+  - 第十章　移山: 11.md
+  - 第十一章　惊雷: 12.md
+  - 第十二章　风向: 13.md
+  - 第十三章　悖论: 14.md
+  - 第十四章　开门: 15.md
+  - 第十五章　高塔: 16.md
+  - 第十六章　失语: 17.md
+  - 第十七章　箱子: 18.md
+  - 第十八章　回眸: 19.md
+  - 第十九章　末座: 20.md
+  - 第二十章　减法: 21.md
+  - 第二十一章　并流: 22.md
+  - 第二十二章　记号: 23.md
+  - 第二十三章　众目: 24.md
+  - 第二十四章　代价: 25.md
+  - 第二十五章　定形: 26.md
+  - 第二十六章　曲线: 27.md
+  - 第二十七章　三个数字: 28.md
+  - 第二十八章　通吃: 29.md
+  - 第二十九章　野马: 30.md
+  - 第三十章　缰绳: 31.md
+  - 第三十一章　褒贬: 32.md
+  - 尾声　像与真: 33.md
