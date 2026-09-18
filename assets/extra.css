@@ -426,3 +426,75 @@ body[data-md-color-scheme][data-md-color-primary] {
     columns: 1;
   }
 }
+
+/* ---------- 8. 章节翻页：正文读完，下一步就在手边 ---------- */
+
+/* 一条发丝线把正文和按钮分开，跟章题下那道引线是同一个记号 */
+.book-pager {
+  display: flex;
+  gap: 0.6rem;
+  margin: 3rem 0 0;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--book-line);
+}
+
+.book-pager__item {
+  flex: 1 1 0;
+  min-width: 0;
+  display: block;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--book-line);
+  border-radius: 0.2rem;
+  text-decoration: none;
+  transition: border-color 125ms, color 125ms;
+}
+
+.book-pager__item:hover,
+.book-pager__item:focus {
+  border-color: var(--book-accent);
+  background-color: transparent;
+}
+
+/* 方向词小字疏排，跟章号是同一种处理 */
+.book-pager__dir {
+  display: block;
+  font-family: var(--book-sans);
+  font-size: 0.58rem;
+  letter-spacing: 0.2em;
+  color: var(--book-nav-ink);
+  margin-bottom: 0.3rem;
+}
+
+.book-pager__name {
+  display: block;
+  font-family: var(--book-sans);
+  font-size: 0.72rem;
+  color: var(--book-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.book-pager__item:hover .book-pager__dir {
+  color: var(--book-accent);
+}
+
+.book-pager__item:hover .book-pager__name {
+  color: var(--book-accent);
+}
+
+/* 下一章靠右，方向词和章名都对齐右缘 */
+.book-pager__item--next {
+  text-align: right;
+}
+
+/* 窄屏改成上下两块，长章名不至于被挤成一行省略号 */
+@media screen and (max-width: 34em) {
+  .book-pager {
+    flex-direction: column;
+  }
+
+  .book-pager__item--next {
+    text-align: left;
+  }
+}
