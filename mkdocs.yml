@@ -8,6 +8,8 @@ copyright: 从感知机到 ChatGPT
 docs_dir: docs
 site_dir: site
 use_directory_urls: false
+extra_css:
+  - assets/extra.css
 
 theme:
   name: material

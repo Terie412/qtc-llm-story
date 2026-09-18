@@ -76,6 +76,24 @@ index = """# %s
 io.open(os.path.join(DOCS, "index.md"), "w", encoding="utf-8").write(index)
 print("正文字数(去空白):", n_chars)
 
+# 站点自定义样式：把底部信息栏固定在窗口底部
+EXTRA_CSS = """/* 底部信息栏固定在窗口底部，正文滚动时它不动 */
+.md-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+}
+
+/* 固定栏会占住视口底部，给左侧目录减掉这段高度，
+   否则目录滚到底时最后几项会被盖住点不到 */
+@media screen and (min-width: 76.25em) {
+  .md-sidebar__scrollwrap {
+    max-height: calc(100vh - 7rem);
+  }
+}
+"""
+io.open(os.path.join(ASSETS, "extra.css"), "w", encoding="utf-8").write(EXTRA_CSS)
+
 # PDF 放一份到站点里，供下载
 if os.path.exists(PDF):
     shutil.copyfile(PDF, os.path.join(ASSETS, "neural-networks-story.pdf"))
