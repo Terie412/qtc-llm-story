@@ -1,0 +1,14 @@
+/* 底部信息栏固定在窗口底部，正文滚动时它不动 */
+.md-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+}
+
+/* 固定栏会占住视口底部，给左侧目录减掉这段高度，
+   否则目录滚到底时最后几项会被盖住点不到 */
+@media screen and (min-width: 76.25em) {
+  .md-sidebar__scrollwrap {
+    max-height: calc(100vh - 7rem);
+  }
+}
