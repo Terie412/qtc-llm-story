@@ -1,36 +1,49 @@
 /* ==========================================================================
    站点外观：往"书"的方向调，不改变任何结构。
+   明暗关系自上而下递减：正文 > 标题 > 页头页脚 > 左侧目录。
+   正文拿最实的一档墨色，其余全部往背景里退，眼睛自然落在文字上。
+   没有哪一档是纯黑或纯白。
    由 build/md2web.py 生成，要改样式请改那个脚本里的 EXTRA_CSS。
    ========================================================================== */
 
 /* ---------- 1. 配色：纸与墨 ----------
    Material 把配色变量声明在 :root / [data-md-color-scheme] 上，
-   这里用 body[data-md-color-scheme=...] 提高一级特异性来覆盖。 */
+   这里用 body[data-md-color-scheme=...] 提高一级特异性来覆盖。
+   四档墨色，由实到虚：book-ink（正文）→ book-ink-title（标题）
+   → book-ink-soft（页头页脚）→ book-nav-ink（左侧目录）。 */
 
 body {
   --book-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
     "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
   --book-serif: Georgia, "Songti SC", "Source Han Serif SC",
     "Noto Serif CJK SC", "SimSun", serif;
+
+  /* 左侧目录的栏宽，以及页头页脚占掉的高度（页脚实测约 3.6rem） */
+  --book-nav-w: 10rem;
+  --book-header-h: 2.4rem;
+  --book-footer-h: 3.6rem;
 }
 
 body[data-md-color-scheme="default"] {
   --book-paper: #faf8f4;
-  --book-paper-soft: #f3efe8;
-  --book-ink: #211e1b;
-  --book-ink-soft: #6c655e;
+  --book-paper-soft: #f2eee7;
+  --book-ink: #33302b;        /* 正文：最深的一档，不是纯黑 */
+  --book-ink-title: #4f4943;  /* 标题：比正文淡一档 */
+  --book-ink-soft: #6c655e;   /* 页头页脚 */
+  --book-nav-ink: #857e74;    /* 左侧目录：最淡，退到背景里 */
+  --book-ink-faint: #a9a29a;
   --book-line: #e5e0d7;
   --book-accent: #2f4f6f;
 
   --md-default-bg-color: var(--book-paper);
   --md-default-fg-color: var(--book-ink);
   --md-default-fg-color--light: var(--book-ink-soft);
-  --md-default-fg-color--lighter: #a9a29a;
+  --md-default-fg-color--lighter: var(--book-ink-faint);
   --md-default-fg-color--lightest: var(--book-line);
   --md-primary-fg-color: var(--book-paper);
   --md-primary-fg-color--light: var(--book-paper);
   --md-primary-fg-color--dark: var(--book-paper);
-  --md-primary-bg-color: var(--book-ink);
+  --md-primary-bg-color: var(--book-ink-title);
   --md-accent-fg-color: var(--book-accent);
   --md-typeset-color: var(--book-ink);
   --md-typeset-a-color: var(--book-accent);
@@ -39,26 +52,29 @@ body[data-md-color-scheme="default"] {
   --md-footer-bg-color--dark: var(--book-paper);
   --md-footer-fg-color: var(--book-ink-soft);
   --md-footer-fg-color--light: var(--book-ink-soft);
-  --md-footer-fg-color--lighter: #a9a29a;
+  --md-footer-fg-color--lighter: var(--book-ink-faint);
 }
 
 body[data-md-color-scheme="slate"] {
   --book-paper: #17191c;
   --book-paper-soft: #1f2227;
-  --book-ink: #d9d5ce;
-  --book-ink-soft: #918b83;
-  --book-line: #2b2f35;
-  --book-accent: #93b5d8;
+  --book-ink: #d2cec7;        /* 正文：最亮的一档，不是纯白 */
+  --book-ink-title: #b3ada4;  /* 标题：比正文淡一档 */
+  --book-ink-soft: #918b83;   /* 页头页脚 */
+  --book-nav-ink: #7e7871;    /* 左侧目录：最淡，退到背景里 */
+  --book-ink-faint: #6f6a64;
+  --book-line: #272b31;
+  --book-accent: #8fb0d0;
 
   --md-default-bg-color: var(--book-paper);
   --md-default-fg-color: var(--book-ink);
   --md-default-fg-color--light: var(--book-ink-soft);
-  --md-default-fg-color--lighter: #6f6a64;
+  --md-default-fg-color--lighter: var(--book-ink-faint);
   --md-default-fg-color--lightest: var(--book-line);
   --md-primary-fg-color: var(--book-paper);
   --md-primary-fg-color--light: var(--book-paper);
   --md-primary-fg-color--dark: var(--book-paper);
-  --md-primary-bg-color: var(--book-ink);
+  --md-primary-bg-color: var(--book-ink-title);
   --md-accent-fg-color: var(--book-accent);
   --md-typeset-color: var(--book-ink);
   --md-typeset-a-color: var(--book-accent);
@@ -67,7 +83,15 @@ body[data-md-color-scheme="slate"] {
   --md-footer-bg-color--dark: var(--book-paper);
   --md-footer-fg-color: var(--book-ink-soft);
   --md-footer-fg-color--light: var(--book-ink-soft);
-  --md-footer-fg-color--lighter: #6f6a64;
+  --md-footer-fg-color--lighter: var(--book-ink-faint);
+}
+
+/* Material 的 indigo 深色预设把 --md-typeset-a-color 写死在
+   [data-md-color-scheme][data-md-color-primary] 两级属性选择器里，
+   比上面 body[data-md-color-scheme=...] 那一层高一级，会把正文链接和
+   当前章节的蓝色抢成 #5488e8。这里用同级的写法把它拉回我们自己的强调色。 */
+body[data-md-color-scheme][data-md-color-primary] {
+  --md-typeset-a-color: var(--book-accent);
 }
 
 /* ---------- 2. 正文：标题黑体、正文宋体 ---------- */
@@ -100,13 +124,14 @@ body[data-md-color-scheme="slate"] {
   margin: 0 0 1.8rem;
   padding: 0;
   border: none;
-  color: var(--book-ink);
+  color: var(--book-ink-title);
 }
 
 .md-typeset h2 {
   font-size: 1.05rem;
   border: none;
   padding: 0;
+  color: var(--book-ink-title);
 }
 
 .md-typeset strong {
@@ -116,32 +141,29 @@ body[data-md-color-scheme="slate"] {
 
 /* ---------- 3. 版心：每行约 38 字，整块居中 ---------- */
 
-/* 整站网格收窄。Material 默认 61rem 铺得很开，右栏收掉之后
-   正文右边会空出一大块；把网格收到"侧栏 + 版心"刚好的宽度并居中，
-   左右留白才是对称的。 */
+/* 网格铺满整屏：页头页脚贴边，左侧目录贴左，正文单独居中。
+   目录脱离文档流（见第 6 节）之后不再占列宽，
+   正文的居中才不会被它推向一侧。 */
 .md-grid {
-  max-width: 48rem;
+  max-width: 100%;
 }
 
 .md-content__inner {
-  max-width: 34rem;
+  /* 窄窗口下留出左右各 1rem 的呼吸，别贴着屏幕边 */
+  max-width: min(34rem, 100% - 2rem);
   margin-inline: auto;
   padding-bottom: 2.4rem;
 }
 
-/* 每一章都是平铺的正文、没有小标题，右侧"本页目录"是空的。
-   收掉它，正文才能真正落在版心正中。
-   坑：Material 用 .md-sidebar--secondary:not([hidden]) 显示右栏，特异性两级，
-   所以这里必须写成 .md-sidebar.md-sidebar--secondary 才压得过它。 */
-@media screen and (min-width: 1220px) {
-  .md-sidebar.md-sidebar--secondary {
-    display: none;
-  }
-
-  /* 右栏收掉之后，Material 给正文留的那点右边距也跟着撤掉，否则版心是偏的 */
-  [dir="ltr"] .md-sidebar--secondary ~ .md-content > .md-content__inner {
-    margin-right: 0;
-  }
+/* Material 给正文左右各塞了 1.2rem 的边距，选择器带 [dir] 和 :not()，
+   特异性到 5 级，普通写法压不过它，正文会被钉在左侧。
+   这里用同样长的选择器把那两条边距还原成 auto，版心才落在屏幕正中。 */
+[dir="ltr"] .md-sidebar--primary:not([hidden]) ~ .md-content > .md-content__inner,
+[dir="rtl"] .md-sidebar--primary:not([hidden]) ~ .md-content > .md-content__inner,
+[dir="ltr"] .md-sidebar--secondary:not([hidden]) ~ .md-content > .md-content__inner,
+[dir="rtl"] .md-sidebar--secondary:not([hidden]) ~ .md-content > .md-content__inner {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* ---------- 4. 页头：不要大色块，只留一条发丝线 ---------- */
@@ -149,7 +171,7 @@ body[data-md-color-scheme="slate"] {
 .md-header,
 .md-header--shadow {
   background-color: var(--book-paper);
-  color: var(--book-ink);
+  color: var(--book-ink-title);
   box-shadow: none;
   border-bottom: 1px solid var(--book-line);
 }
@@ -180,32 +202,91 @@ body[data-md-color-scheme="slate"] {
   opacity: 0.75;
 }
 
-/* 固定栏会占住视口底部，给左侧目录减掉这段高度，
-   否则目录滚到底时最后几项会被盖住点不到 */
-@media screen and (min-width: 1220px) {
-  .md-sidebar__scrollwrap {
-    max-height: calc(100vh - 7rem);
-  }
-}
+/* 目录栏的高度由第 6 节按页头页脚扣好，这里不再单独限高 */
 
-/* ---------- 6. 侧栏与导航 ---------- */
+/* ---------- 6. 左侧目录：收窄、贴住窗口左边缘、退到背景里 ---------- */
 
 .md-nav {
   font-family: var(--book-sans);
 }
 
-/* 站名已经在页头了，侧栏顶部不必再重复一遍 */
+/* 目录只是索引，不是读物：字形和行距都收一档，
+   颜色压到最淡的一档，让视觉重量整体让给正文。 */
+.md-nav--primary .md-nav__link {
+  color: var(--book-nav-ink);
+  font-size: 0.64rem;
+  line-height: 1.45;
+  margin-top: 0.28em;
+  transition: color 125ms;
+}
+
+.md-nav--primary .md-nav__link:hover,
+.md-nav--primary .md-nav__link:focus {
+  color: var(--book-ink-title);
+}
+
+/* 当前章节。写法要带上 .md-nav--primary 才够特异性，
+   否则会被上面的目录底色盖掉，也会被 Material indigo 调色板里的
+   --md-accent-fg-color 抢走（那条规则是 [属性][属性] 两级）。 */
+.md-nav--primary .md-nav__link--active,
+.md-nav--primary .md-nav__link--active:focus,
+.md-nav--primary .md-nav__link--active:hover {
+  color: var(--book-accent);
+  font-weight: 600;
+}
+
 @media screen and (min-width: 1220px) {
+  /* 站名已经在页头了，侧栏顶部不必再重复一遍 */
   .md-nav--primary > .md-nav__title {
     display: none;
   }
+
+  /* 目录固定在窗口最左侧的一条窄栏里。
+     关键是 position:fixed —— 它一脱流，下面 .md-content 就吃掉整行宽度，
+     版心才能真正落在屏幕正中，而不是被目录推得偏右。 */
+  .md-sidebar--primary {
+    position: fixed;
+    top: var(--book-header-h);
+    left: 0;
+    width: var(--book-nav-w);
+    /* 高度写明，不用 top+bottom 拉伸：abspos 的 flex 容器在 Chrome 里
+       会退回按内容定高，底栏上方会空出一条。 */
+    height: calc(100vh - var(--book-header-h) - var(--book-footer-h));
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    padding: 1.4rem 0 0.4rem 1rem;
+    overflow: hidden;
+  }
+
+  /* 在窄栏里自己滚，滚到最后一项也不会被底栏盖住 */
+  .md-sidebar--primary .md-sidebar__scrollwrap {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
+    max-height: none;
+    margin: 0;
+    padding-right: 0.5rem;
+  }
+
+  /* Material 靠 padding-right:calc(100% - 11.5rem) 把导航压到 11.5rem 宽，
+     侧栏一变窄这条算式就失效了，直接归零让目录铺满栏宽。 */
+  .md-sidebar--primary .md-sidebar__inner {
+    padding: 0;
+  }
+
+  /* 目录脱流之后，正文列独占整行 */
+  .md-main__inner {
+    display: block;
+  }
 }
 
-.md-nav__link--active,
-.md-nav__link--active:focus,
-.md-nav__link--active:hover {
-  color: var(--book-accent);
-  font-weight: 600;
+/* 每一章都是平铺的正文、没有小标题（章节拆分时就已经把 ## 切走了），
+   右侧"本页目录"永远是空的，任何宽度下都收掉，别白占一列。
+   坑：Material 用 .md-sidebar--secondary:not([hidden]) 显示右栏，特异性两级，
+   所以这里必须写成 .md-sidebar.md-sidebar--secondary 才压得过它。 */
+.md-sidebar.md-sidebar--secondary {
+  display: none;
 }
 
 /* ---------- 7. 首页：扉页与目录 ---------- */
